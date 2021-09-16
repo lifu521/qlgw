@@ -1,0 +1,53 @@
+﻿/* Elements----------------------------------------*/
+* {
+	margin: 0;
+	padding: 0;
+	outline: 0;
+}
+.side-bar a,.chat-tips i {
+	background-image: url("../images/code.jpg")/*tpa=http://www.ixcyj.com/images/code.jpg*/;
+	background-repeat: no-repeat;
+}
+/*右侧悬浮icon*/
+.side-bar {
+	width: 100px;
+	position: fixed;
+	bottom: 100px;
+	right: 50px;
+	font-size: 0;
+	line-height: 0;
+	z-index: 100;
+}
+.side-bar a {
+	width: 138px;
+	height: 100px;
+	display: inline-block;
+	background-color: #dddddd;
+	margin-bottom: 2px;
+}
+.side-bar a:hover {
+	background-color: #669fdd;
+}
+.side-bar .icon-qq {
+	background-position: 0 -62px;
+}
+.side-bar .icon-chat {
+	background-position: 0 -130px;
+	position: relative;
+}
+.side-bar .icon-chat:hover .chat-tips {
+	display: block;
+}
+.side-bar .icon-blog {
+	background-position: 0 -198px;
+}
+.side-bar .icon-mail {
+	background-position: 0 -266px;
+}
+.side-bar .icon-totop {
+	background-position: 0 -334px;
+}
+
+
+
+
