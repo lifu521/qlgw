@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <el-container>
+            <el-aside width="200px">
+                <el-input v-model="newCategoryInput" placeholder="增加分类" @keyup.enter.native="addCategory"></el-input>
+                <el-menu :default-active="selectedCategory" @select="handleSelect">
+                    <el-menu-item v-for="category in categories" :key="category" :index="category">
+                        {{ category }}
+                        <span style="float: right; cursor: pointer;" @click.stop="deleteCategory(category)">x</span>
+                    </el-menu-item>
+                </el-menu>
+            </el-aside>
+            <el-main>
+                <el-input v-model="newTodoInput" placeholder="增加待办事项" @keyup.enter.native="addTodo"></el-input>
+                <!-- <el-select v-model="selectedCategory" placeholder="Select Category">
+                    <el-option v-for="category in categories" :key="category" :label="category" :value="category"></el-option>
+                </el-select> -->
+                <ul>
+                    <li v-for="todo in filteredTodos" :key="todo.id" @click="toggleComplete(todo)">
+                        <span :style="{ textDecoration: todo.completed ? 'line-through' : 'none' }">{{ todo.text }}</span>
+                        <span>({{ todo.category }})</span>
+                        <el-button type="text" @click="deleteTodo(todo)">Delete</el-button>
+                    </li>
+                </ul>
+                <el-button @click="exportTodos">导出文本</el-button>
+            </el-main>
+        </el-container>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                newTodoInput: '',
+                newCategoryInput: '',
+                todos: [],
+                categories: [],
+                selectedCategory: 'all'
+            },
+            created() {
+                // 在创建时尝试从 localStorage 恢复数据
+                const savedTodos = localStorage.getItem('todos');
+                if (savedTodos) {
+                    this.todos = JSON.parse(savedTodos);
+                }
+
+                const savedCategories = localStorage.getItem('categories');
+                if (savedCategories) {
+                    this.categories = JSON.parse(savedCategories);
+                }
+            },
+            methods: {
+                addTodo() {
+                    if (this.newTodoInput.trim() !== '') {
+                        this.todos.push({
+                            id: Date.now(),
+                            text: this.newTodoInput,
+                            completed: false,
+                            category: this.selectedCategory
+                        });
+                        this.newTodoInput = '';
+                        this.saveTodos();
+                    }
+                },
+                toggleComplete(todo) {
+                    todo.completed = !todo.completed;
+                    this.saveTodos();
+                },
+                saveTodos() {
+                    localStorage.setItem('todos', JSON.stringify(this.todos));
+                },
+                addCategory() {
+                    const newCategory = this.newCategoryInput.trim();
+                    if (newCategory !== '' && !this.categories.includes(newCategory)) {
+                        this.categories.push(newCategory);
+                        this.newCategoryInput = '';
+                        this.saveCategories();
+                    }
+                },
+                deleteTodo(todo) {
+                    const index = this.todos.indexOf(todo);
+                    if (index !== -1) {
+                        this.todos.splice(index, 1);
+                        this.saveTodos();
+                    }
+                },
+                handleSelect(category) {
+                    this.selectedCategory = category;
+                },
+                clearLocalStorage() {
+                    localStorage.removeItem('todos');
+                    this.todos = [];
+                    localStorage.removeItem('categories');
+                    this.categories = []; // Reset to default categories
+                },
+                saveCategories() {
+                    localStorage.setItem('categories', JSON.stringify(this.categories));
+                },
+                deleteCategory(category) {
+                    const index = this.categories.indexOf(category);
+                    if (index !== -1) {
+                        this.categories.splice(index, 1);
+                        this.saveCategories();
+                    }
+                },
+                exportTodos() {
+                    const data = this.todos.map(todo => `${todo.text} (${todo.category}) ${todo.completed}`).join('\n');
+                    const blob = new Blob([data], {
+                        type: 'text/plain'
+                    });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'todos.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }
+            },
+            computed: {
+                filteredTodos() {
+                    if (this.selectedCategory === 'all') {
+                        return this.todos;
+                    } else {
+                        return this.todos.filter(todo => todo.category === this.selectedCategory);
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
