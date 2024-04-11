@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo App</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.13/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 
@@ -32,10 +32,10 @@
                     <li v-for="todo in filteredTodos" :key="todo.id" @click="toggleComplete(todo)">
                         <span :style="{ textDecoration: todo.completed ? 'line-through' : 'none' }">{{ todo.text }}</span>
                         <span>({{ todo.category }})</span>
-                        <el-button type="text" @click="deleteTodo(todo)">Delete</el-button>
+                        <span style="color:red;margin-left: 30px;" @click="deleteTodo(todo)">x</span>
                     </li>
                 </ul>
-                <el-button @click="exportTodos">导出文本</el-button>
+                <el-button @click="exportTodos" size="small">导出文本</el-button>
             </el-main>
         </el-container>
     </div>
